@@ -19,3 +19,13 @@ def test_create_buku_berhasil():
     mock_cursor.execute.assert_called_once()
     # Memverifikasi apakah perintah commit (simpan) dipanggil
     model.conn.commit.assert_called_once()
+
+def test_get_all_buku():
+    """get_all_buku() harus mengembalikan list berisi dictionary data buku."""
+    model = BukuModel()
+
+    hasil = model.get_all_buku()
+
+    assert isinstance(hasil, list)
+    for buku in hasil:
+        assert {'id_buku', 'judul', 'penulis', 'tahun_terbit'} <= set(buku.keys())

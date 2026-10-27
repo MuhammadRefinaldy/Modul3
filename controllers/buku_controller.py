@@ -11,6 +11,8 @@ class BukuController:
 
         # Binding (mengikat) tombol di View dengan fungsi di Controller
         self.view.btn_simpan.configure(command=self.simpan_data)
+        self.view.btn_delete.configure(command=self.hapus_data)
+        self.view.btn_update.configure(command=self.perbarui_data)
 
         # Memuat data ke tabel saat aplikasi pertama kali dibuka
         self.muat_data_tabel()
@@ -52,6 +54,82 @@ class BukuController:
             self.muat_data_tabel()
         else:
             messagebox.showerror("Error", "Terjadi kesalahan saat menyimpan data.")
+            
+    def hapus_data(self):
+        # Mengambil baris yang dipilih
+        pilihan = self.view.tabel.selection()
+
+        if not pilihan:
+            messagebox.showwarning(
+                "Peringatan", "Pilih data buku yang ingin dihapus!"
+            )
+            return
+
+        # Mengambil id_buku dari kolom pertama
+        item = self.view.tabel.item(pilihan[0])
+        id_buku = item['values'][0]
+
+        konfirmasi = messagebox.askyesno(
+            "Konfirmasi", "Apakah Anda yakin ingin menghapus data buku?"
+        )
+
+        if konfirmasi:
+            berhasil = self.model.delete_buku(id_buku)
+
+            if berhasil:
+                messagebox.showinfo(
+                    "Sukses", "Data buku berhasil dihapus!"
+                )
+                self.muat_data_tabel()
+            else:
+                messagebox.showerror(
+                    "Error", "Data buku gagal dihapus."
+                )
+
+    def perbarui_data(self):
+        # Mengambil baris yang dipilih
+        pilihan = self.view.tabel.selection()
+
+        if not pilihan:
+            messagebox.showwarning(
+                "Peringatan", "Pilih data buku yang ingin diperbarui!"
+            )
+            return
+
+        # Mengambil id_buku dari tabel
+        item = self.view.tabel.item(pilihan[0])
+        id_buku = item['values'][0]
+
+        # Mengambil data dari form
+        judul = self.view.entry_judul.get()
+        penulis = self.view.entry_penulis.get()
+        tahun = self.view.entry_tahun.get()
+
+        if not judul or not penulis or not tahun:
+            messagebox.showwarning(
+                "Peringatan", "Semua kolom form harus diisi!"
+            )
+            return
+
+        # Mengirim perubahan ke Model
+        berhasil = self.model.update_buku(
+            id_buku, judul, penulis, tahun
+        )
+
+        if berhasil:
+            messagebox.showinfo(
+                "Sukses", "Data buku berhasil diperbarui!"
+            )
+
+            self.view.entry_judul.delete(0, 'end')
+            self.view.entry_penulis.delete(0, 'end')
+            self.view.entry_tahun.delete(0, 'end')
+
+            self.muat_data_tabel()
+        else:
+            messagebox.showerror(
+                "Error", "Data buku gagal diperbarui."
+            )
 
     # Fungsi untuk menyalakan aplikasi
     def run(self):
