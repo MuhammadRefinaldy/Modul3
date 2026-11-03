@@ -64,7 +64,7 @@ class BukuController:
         else:
             messagebox.showerror("Error", "Gagal menyimpan data.")
 
-        def update_buku(self):
+    def update_buku(self):
         # Proteksi ganda di level controller
         if self.user_role != "admin":
             messagebox.showerror("Akses Ditolak", "Anda tidak memiliki izin untuk mengubah data!")
@@ -118,7 +118,6 @@ class BukuController:
             self.muat_data_tabel()
         else:
             messagebox.showerror("Error", "Gagal menghapus data.")
-            
     def logout(self):
         from controllers.auth_controller import AuthController  # di dalam fungsi agar tidak circular import
 
